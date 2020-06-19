@@ -13,10 +13,10 @@ new_username = input("Please enter new Github Username (Your username after chan
 passwd = input("Enter password for authentication of Github v3 API: ")
 
 # Authenticate and instantiate PyGithub Object.
-g = gh.Github(old_username, passwd)
+g = gh.Github(new_username, passwd)
 
 # Get user by username.
-user = g.get_user(old_username)
+user = g.get_user(new_username)
 
 for repo in user.get_repos():
     print("UPDATING USERNAME IN REPO: {}\n".format(repo.name))
