@@ -33,12 +33,21 @@ for repo in user.get_repos():
     try:
         readme_file = repo.get_contents("README.md")
     except gh.GithubException:
-        # Try with .txt instead.
-        readme_file = repo.get_contents("README.txt")
+        try:
+            # Try with .txt instead.
+            readme_file = repo.get_contents("README.txt")
+        except gh.GithubException:
+            print("Weren't able to find any README's in this repository.")
+            print("Skipping...")
+            continue
     
-    # Update file and make new commit.
-    commit_message = "Updated README.md to reflect username change using script."
-    repo.update_file(readme_file.path, commit_message, 
-        new_readme_contents, readme_file.sha, branch="master")
+    # Only commit if new changes to the README have actually been done.
+    if new_readme_contents != readme_contents:
+        # Update file and make new commit.
+        commit_message = "Updated README.md to reflect username change using script."
+        repo.update_file(readme_file.path, commit_message, 
+            new_readme_contents, readme_file.sha, branch="master")
     
-    print("SUCCESSFULLY UPDATED\n\n")
+        print("Successfully updated {} in repository.\n\n".format(readme_file.name))
+    else:
+        print("Nothing changed in README - Already up-to-date...")
